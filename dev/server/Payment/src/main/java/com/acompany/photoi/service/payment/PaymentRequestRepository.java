@@ -9,7 +9,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-public interface PaymentRepository {
-	Page<Payment> findByOwner(Integer id,Pageable pages);
-	Page<Payment> findAll(Pageable pager);	
+
+
+public interface PaymentRequestRepository {	
+	List<PaymentRequest> findAll();
+	PaymentRequest findById(Integer paymentId) throws PaymentRequestNotFoundException;
+	void delete(PaymentRequest payed) throws PaymentRequestNotFoundException;
+	void save(PaymentRequest payment);
+
 }
