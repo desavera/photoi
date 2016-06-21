@@ -1,0 +1,318 @@
+<html>  
+  <head>    
+    
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular.js"></script>  
+      
+    <title>Air-TS</title>    
+ <script type="text/javascript">  
+            var app = angular.module("FlightSearchManager", []);  
+           
+            //Controller Part  
+            app.controller("FlightSearchController", function($scope, $http) {  
+           
+                 
+                $scope.departureSchedules = [];  
+                $scope.returningSchedules = [];  
+                $scope.selectedSchedules = [];  
+                $scope.schedules = [];  
+                $scope.originBookingSchedule;  
+                $scope.destinyBookingSchedule;  
+                $scope.scheduleForm = {  
+                    origin : "",
+                    destiny : "",  
+                    departuring : "",                      
+                    returning : "",                      
+                    seats : ""
+                };      
+
+		_clearFormData();
+                
+                $scope.submitBooking = function() {  
+           
+                    var method = "POST";
+                    var url = '/booking';
+                    if (!$scope.selectedSchedules.isEmpty()) {                          
+                    
+                   	 $http({  
+                       	 method : method,  
+                      	  url : url,  
+                       	 data : angular.toJson($scope.scheduleForm),  
+                       	 headers : {  
+                       	     'Content-Type' : 'application/json'  
+                       	 }  
+                   	 }).then( _success, _error );  
+		    }
+                };  
+
+                $scope.selectOriginSchedule = function(schedule) {
+
+			if ($scope.originBookingSchedule)
+				$scope.unselectSchedule($scope.originBookingSchedule);
+
+			$scope.originBookingSchedule = schedule;
+			$scope.selectedSchedules.push($scope.originBookingSchedule);
+                };  
+   
+                $scope.selectDestinySchedule = function(schedule) {
+
+			if ($scope.destinyBookingSchedule)
+				$scope.unselectSchedule($scope.destinyBookingSchedule);
+
+			$scope.destinyBookingSchedule = schedule;
+			$scope.selectedSchedules.push($scope.destinyBookingSchedule);
+                };  
+
+                $scope.unselectSchedule = function(schedule) {
+
+			$scope.selectedSchedules.splice($scope.selectedSchedules.indexOf(schedule),1);
+                };  
+
+                $scope.fillScheduleData = function() {  
+
+			_clearSelectedSchedules();
+
+			$http({
+			    method: 'POST',
+			    url: 'http://localhost:8080/fsearch',
+			    headers: {
+ 			       'Content-Type': 'application/json', 
+    			    'Accept': 'application/json' 
+  			  },
+ 			   data : angular.toJson($scope.scheduleForm),
+                   	 }).then(function successCallback(response) {  
+
+                        $scope.schedules = response.data;  
+           		angular.forEach($scope.schedules, function(schedule) {
+
+				if (schedule.origin.code.substring(0,3).toUpperCase() === $scope.scheduleForm.origin.toUpperCase())
+					$scope.departureSchedules.push(schedule);
+				else
+					$scope.returningSchedules.push(schedule);
+		        });
+
+                    }, function errorCallback(response) {  
+                        console.log(response.statusText);  
+                    });  
+                }  
+
+		//
+		// PRIVATE METHODS
+		//
+                function _success(response) {  
+                }  
+           
+                function _error(response) {  
+                    console.log(response.statusText);  
+                }  
+           
+                //Clear the form  
+                function _clearFormData() {  
+                	
+                    $scope.scheduleForm.origin = "";  
+                    $scope.scheduleForm.destiny = "";
+                    $scope.scheduleForm.departuring = "";                    
+                    $scope.scheduleForm.returning = "";                    
+                    $scope.scheduleForm.seats = "";
+                };  
+	
+		function _clearSelectedSchedules() {
+
+		    $scope.departureSchedules = [];
+		    $scope.returningSchedules = [];
+		    $scope.selectedSchedules = [];
+		}
+			
+
+            });  
+        </script>  
+        <style>  
+             
+       .blue-button{  
+     background: #25A6E1;  
+     filter: progid: DXImageTransform.Microsoft.gradient( startColorstr='#25A6E1',endColorstr='#188BC0',GradientType=0);  
+     padding:3px 5px;  
+     color:#fff;  
+     font-family:'Helvetica Neue',sans-serif;  
+     font-size:12px;  
+     border-radius:2px;  
+     -moz-border-radius:2px;  
+     -webkit-border-radius:4px;  
+     border:1px solid #1A87B9  
+           }       
+  
+       .red-button{  
+    background: #CD5C5C;  
+  
+    padding:3px 5px;  
+    color:#fff;  
+    font-family:'Helvetica Neue',sans-serif;  
+    font-size:12px;  
+    border-radius:2px;  
+    -moz-border-radius:2px;  
+    -webkit-border-radius:4px;  
+    border:1px solid #CD5C5C  
+           }        
+  
+       table {  
+           font-family: "Helvetica Neue", Helvetica, sans-serif;  
+           width: 80%;  
+       }  
+  
+       caption {  
+           text-align: left;  
+           color: silver;  
+           font-weight: bold;  
+           text-transform: uppercase;  
+           padding: 5px;  
+       }  
+  
+       th {  
+           background: SteelBlue;  
+           color: white;  
+       }  
+  
+  
+       tbody tr:nth-child(even) {  
+           background: WhiteSmoke;  
+       }  
+  
+       tbody tr td:nth-child(2) {  
+           text-align:center;  
+       }  
+  
+       tbody tr td:nth-child(3),  
+       tbody tr td:nth-child(4) {  
+           text-align: center;  
+           font-family: monospace;  
+       }  
+  
+       tfoot {  
+           background: SeaGreen;  
+           color: white;  
+           text-align: right;  
+       }  
+  
+       tfoot tr th:last-child {  
+           font-family: monospace;  
+       }  
+  
+       td,th{  
+            border: 1px solid gray;  
+            width: 45%;  
+            text-align: left;  
+            padding: 5px 10px;  
+        }  
+            
+      .selected {
+        background-color: red;
+      }
+
+      .spotcode.ng-dirty.ng-invalid-minlength {
+          background-color: yellow;
+      }
+
+      .spotcode.ng-dirty.ng-invalid-maxlength {
+          background-color: yellow;
+      }
+              
+              
+    </style>  
+    </head>  
+    <body ng-app="FlightSearchManager" ng-controller="FlightSearchController">  
+         <h1>  
+           Air-TS - Book your trip !   
+        </h1>   
+        <form name="bookingForm" ng-submit="fillScheduleData()">  
+            <table>  
+                 
+                <tr>  
+                    <th colspan="2">Submit your search for flights using the airports 3 digits code</th>  
+                 </tr>  
+                <tr>  
+                    <td>Origin</td>  
+                    <td><input required type="text" ng-model="scheduleForm.origin" class="spotcode" ng-minlength="3" ng-maxlength="3" style="text-transform:uppercase"/></td>  
+                </tr>  
+                <tr>  
+                    <td>Destiny</td>  
+                    <td><input required type="text" ng-model="scheduleForm.destiny" class="spotcode" ng-minlength="3" ng-maxlength="3" style="text-transform:uppercase"/></td>  
+                </tr>
+                <tr>  
+                    <td>Departuring Date</td>  
+                    <td><input required type="date" name="input" ng-model="scheduleForm.departuring" placeholder="yyyy-MM-dd" min="2016-01-01" max="2200-12-31"/></td>  
+                </tr>  
+                <tr>  
+                    <td>Returning Date</td>  
+                    <td><input required type="date" name="input" ng-model="scheduleForm.returning" placeholder="yyyy-MM-dd" min="2016-01-01" max="2200-12-31"/></td>  
+                </tr>  
+                <tr>  
+                    <td>Number of Passengers</td>  
+                    <td><input required type="text" ng-model="scheduleForm.seats"  /></td>  
+                </tr>  
+                <tr>  
+                    <td colspan="2"><input type="submit" value="Submit" class="blue-button" /></td>  
+                </tr>  
+            </table>  
+        </form>  
+        <table>  
+            <tr>                  
+                <th>Origin</th>  
+                <th>Destiny</th>
+                <th>Departuring</th>  
+                <th>Pricing</th>                   
+            </tr>  
+   
+           <tr ng-repeat="schedule in departureSchedules">  
+                 
+    		<td>{{ schedule.origin.code }}</td>  
+    		<td>{{ schedule.destiny.code }}</td>    
+    		<td>{{ schedule.departuring }}</td>
+    		<td>{{ schedule.costs }}</td>
+                  
+            <td colspan="2"><a ng-click="selectOriginSchedule(schedule)" class="blue-button">Select</a></td>  
+           </tr>  
+        </table>  
+        <table>  
+            <tr>                  
+                <th>Origin</th>  
+                <th>Destiny</th>
+                <th>Departuring</th>  
+                <th>Pricing</th>                   
+            </tr>  
+   
+           <tr ng-repeat="schedule in returningSchedules">  
+                 
+    		<td>{{ schedule.origin.code }}</td>  
+    		<td>{{ schedule.destiny.code }}</td>    
+    		<td>{{ schedule.departuring }}</td>
+    		<td>{{ schedule.costs }}</td>
+                  
+            <td colspan="2"><a ng-click="selectDestinySchedule(schedule)" class="blue-button">Select</a></td>  
+           </tr>  
+        </table>  
+
+        <form ng-submit="submitBooking()">  
+        <table>  
+            <tr>                  
+                <th>Origin</th>  
+                <th>Destiny</th>
+                <th>Departuring</th>  
+                <th>Pricing</th>                   
+            </tr>  
+   
+           <tr ng-repeat="schedule in selectedSchedules">  
+                 
+    		<td>{{ schedule.origin.code }}</td>  
+    		<td>{{ schedule.destiny.code }}</td>    
+    		<td>{{ schedule.departuring }}</td>
+    		<td>{{ schedule.costs }}</td>
+
+            <td colspan="2"><a ng-click="unselectSchedule(schedule)" class="red-button">Remove</a></td>  
+
+           </tr>  
+           <tr>  
+                <td colspan="2"><input type="submit" value="Booking Checkout" class="blue-button" /></td>  
+           </tr>  
+        </table>  
+	</form>
+  </body>  
+</html> 
