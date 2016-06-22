@@ -1,4 +1,4 @@
-package com.macro.pictasty.service.productsearch;
+package com.acompany.photoi.service.productsearch;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

@@ -1,4 +1,4 @@
-package com.macro.pictasty.service.productsearch;
+package com.acompany.photoi.service.productsearch;
 
 
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;

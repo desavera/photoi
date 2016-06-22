@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
 import java.util.Comparator;
 
 import org.springframework.data.domain.Page;
@@ -25,7 +26,7 @@ public class PaymentRequestRepositoryMockImpl implements PaymentRequestRepositor
 	
 	@Override
 	public List<PaymentRequest> findAll() {
-		return (List<PaymentRequest>) repoMap.values();
+		return new ArrayList<PaymentRequest>(repoMap.values());
 	}
 
 	@Override

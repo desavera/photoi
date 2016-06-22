@@ -3,10 +3,9 @@ package com.acompany.photoi.service.users;
 
 import java.util.List;
 
+import org.springframework.stereotype.Repository;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-
+@Repository
 public interface UserRepository {			
 	List<User> findAll();
 	User findByUserName(String username) throws UserNotFoundException;

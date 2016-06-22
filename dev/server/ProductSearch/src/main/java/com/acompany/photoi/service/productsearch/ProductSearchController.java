@@ -1,4 +1,4 @@
-package com.macro.pictasty.service.productsearch;
+package com.acompany.photoi.service.productsearch;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -30,7 +30,7 @@ public class ProductSearchController {
     @RequestMapping(value="/psearch" , method=RequestMethod.POST,
 		    		consumes = {MediaType.APPLICATION_JSON_VALUE},
 		    		produces = MediaType.APPLICATION_JSON_VALUE)
-    public Page<Product> findProductsByQueryParam(
+    public List<Product> findProductsByQueryParam(
     		final @RequestParam(defaultValue = "0", required = false) int page,
      	    final @RequestParam(defaultValue = "10", required = false) int pageSize,
      	    @RequestBody ProductQuery query) {
@@ -39,7 +39,7 @@ public class ProductSearchController {
 
 		Pageable pager = new PageRequest(page, pageSize);
 
-		Page<Product> matchList = productRepo.findByQueryParam(query,pager);
+		List<Product> matchList = productRepo.findByQueryParam(query);
 
 		return matchList;
 
@@ -57,11 +57,11 @@ public class ProductSearchController {
     
     
     @RequestMapping("/psearch")
-    public Page<Product> findAllSchedules(
+    public List<Product> findAllSchedules(
     		final @RequestParam(defaultValue = "0", required = false) int page,
      	    final @RequestParam(defaultValue = "10", required = false) int pageSize) {
     	Pageable pager = new PageRequest(page, pageSize);
-    	Page<Product> entities = productRepo.findAll(pager);
+    	List<Product> entities = productRepo.findAll();
         return entities;
     }
 }

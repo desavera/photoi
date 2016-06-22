@@ -1,5 +1,7 @@
 package com.acompany.photoi.test;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
@@ -17,6 +19,9 @@ import org.springframework.boot.test.TestRestTemplate;
 import org.springframework.boot.test.WebIntegrationTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.MediaType;
+import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -24,15 +29,20 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.WebApplicationContext;
 
+import com.acompany.photoi.service.users.User;
+import com.acompany.photoi.service.users.UsersApplication;
+
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes=UsersServiceTest.class, loader=SpringApplicationContextLoader.class)
+@SpringApplicationConfiguration(classes=UsersApplication.class)
 @WebAppConfiguration
+@EnableAutoConfiguration
+@IntegrationTest
 public class UsersServiceTest {
 
 	
-	final String uri = "http://localhost:8080/users";
+	
 	final Logger logger = Logger.getLogger(UsersServiceTest.class);
 
 	@Bean
@@ -45,18 +55,103 @@ public class UsersServiceTest {
 		return factory;
 	}
 
-	RestTemplate template = new TestRestTemplate();
-
-  //  @Autowired
-    //private WebApplicationContext appContext;
-      
-    
+	
+   
 	@Test
-	public void testRequest() throws Exception {
+	public void testRequestForFindAllUsers() throws Exception {
+	
+		
+		final String uri = "http://localhost:8080/users";
+		RestTemplate template = new TestRestTemplate();
         String result = template.getForObject(uri, String.class);
         
         logger.debug(result);
 	}
 	
-    
+	@Test
+	public void testRequestForLogin() throws Exception {
+		
+		final String uri = "http://localhost:8080/users/login";
+		RestTemplate rt = new TestRestTemplate();        
+        
+        rt.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+        rt.getMessageConverters().add(new StringHttpMessageConverter());
+
+        
+        User user = new User();
+        user.setUsername("photoiuser");
+        user.setPassword("photoi123");
+        User result = rt.postForObject(uri, user, User.class);
+        		
+        
+        logger.debug(result);
+	}
+
+	@Test
+	public void testRequestForLogout() throws Exception {
+		
+		final String uri = "http://localhost:8080/users/logout";
+		RestTemplate rt = new TestRestTemplate();        
+        
+        rt.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+        rt.getMessageConverters().add(new StringHttpMessageConverter());
+
+        
+        User user = new User();
+        user.setUsername("photoiuser");
+        user.setPassword("photoi123");
+        User result = rt.postForObject(uri, user, User.class);
+        		
+        
+        logger.debug(result);
+	}
+	
+	@Test
+	public void testRequestForFindUSer() throws Exception {
+		
+		final String uri = "http://localhost:8080/users/photoiuser";
+		RestTemplate rt = new TestRestTemplate();        
+        
+        rt.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+        rt.getMessageConverters().add(new StringHttpMessageConverter());
+       
+        User result = rt.getForObject(uri,User.class);
+        		
+        
+        logger.debug(result);
+	}
+	
+	@Test
+	public void testRequestForUpdate() throws Exception {
+		
+		final String uri = "http://localhost:8080/users";
+		RestTemplate rt = new TestRestTemplate();        
+        
+        rt.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+        rt.getMessageConverters().add(new StringHttpMessageConverter());
+
+        
+        User user = new User();
+        user.setUsername("photoiuser");
+        user.setPassword("photoi123");
+        rt.put(uri, user, new HashMap());  		        	
+        
+        logger.debug("put method executed...");
+	}
+		
+	@Test
+	public void testRequestForDelete() throws Exception {
+		
+		final String uri = "http://localhost:8080/users/photoiuser";
+		RestTemplate rt = new TestRestTemplate();        
+        
+        rt.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+        rt.getMessageConverters().add(new StringHttpMessageConverter());
+
+        rt.delete(uri);  		        	
+        
+        logger.debug("delete method executed...");
+	}
+			
+	
  }

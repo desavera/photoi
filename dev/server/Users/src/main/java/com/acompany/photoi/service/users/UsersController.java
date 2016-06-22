@@ -4,14 +4,11 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -22,34 +19,26 @@ public class UsersController {
     private UserRepository userRepo;
 
 	final Logger logger = Logger.getLogger(UsersController.class); 
-   
+             
     
-    
-    
-    
-    @RequestMapping(value="/users" , method=RequestMethod.GET,
-    consumes = {MediaType.APPLICATION_JSON_VALUE},
-    produces = MediaType.APPLICATION_JSON_VALUE)    
+    @RequestMapping(value="/users" , method=RequestMethod.GET)
     public List<User> findAllUsers() { 
     	
     	List<User> entities = userRepo.findAll();
         return entities;
     }
-
-    
-    @RequestMapping(value="/users/login" , method=RequestMethod.GET,
-	consumes = {MediaType.APPLICATION_JSON_VALUE},
-	produces = MediaType.APPLICATION_JSON_VALUE)    
-    public User login(@PathVariable(value="username") String username,
-    				   @PathVariable(value="password") String password) {    	
+   
+    @RequestMapping(value="/users/login" , method=RequestMethod.POST)
+    public User login(@RequestBody User user) {
+    				       	
     	
     	//TODO : return 404 e 400
     	User userFound = new User();
         try {
 			
-        	userFound = userRepo.findByUserName(username);
+        	userFound = userRepo.findByUserName(user.getUsername());
 			
-        	if (userFound.getPassword().compareTo(password) == 0)
+        	if (userFound.getPassword().compareTo(user.getPassword()) == 0)
 			
         		userFound.setUserStatus(User.LOGGED);
         	
@@ -57,22 +46,18 @@ public class UsersController {
         	
 		} catch (UserNotFoundException  e) {
 			
-			logger.error("User not found : " + username + '\n' + e);
+			logger.error("User not found : " + user.getUsername() + '\n' + e);
 			
 		} catch (WrongUserPasswordException e) {
 			
 			logger.error("User password mismatch ... " + '\n' + e);
 		}
-        
-		
+        		
         return userFound;
     }
-
     
-    @RequestMapping(value="/users/logout" , method=RequestMethod.GET,
-	consumes = {MediaType.APPLICATION_JSON_VALUE},
-	produces = MediaType.APPLICATION_JSON_VALUE)    
-    public User logout(@PathVariable(value="user") User user) {    	
+    @RequestMapping(value="/users/logout" , method=RequestMethod.POST)
+	public User logout(@RequestBody User user) {    	
     	
     	//TODO : return 404 e 400
     	User userFound = new User();
@@ -88,10 +73,8 @@ public class UsersController {
     }
     
     
-    @RequestMapping(value="/users/{userName}" , method=RequestMethod.GET,
-	consumes = {MediaType.APPLICATION_JSON_VALUE},
-	produces = MediaType.APPLICATION_JSON_VALUE)    
-    public User findUser(@PathVariable(value="id") String username) {    	
+    @RequestMapping(value="/users/{username}" , method=RequestMethod.GET)
+    public User findUser(@PathVariable(value="username") String username) {    	
     	
     	//TODO : return 404 e 400
     	User user = new User();
@@ -109,7 +92,7 @@ public class UsersController {
     @RequestMapping(value="/users" , method=RequestMethod.PUT,
 	consumes = {MediaType.APPLICATION_JSON_VALUE},
 	produces = MediaType.APPLICATION_JSON_VALUE)    
-    public User updateUser(@PathVariable(value="user") User user) {    	
+    public void updateUser(@RequestBody User user) {    	
     	
         User userFound = new User();
 		try {
@@ -117,13 +100,14 @@ public class UsersController {
 		} catch (UserNotFoundException e) {
 			
 			// this is a new user then
-			userRepo.save(user);			
+			userRepo.save(user);
+			logger.error("User created : " + user.getUsername());
+
 		}
 
-		logger.error("User created : " + user.getUsername());
+		logger.error("User updated : " + user.getUsername());
 		userFound.update(user);
-		userRepo.save(userFound);	
-        return userFound;
+		userRepo.save(userFound);	        
     }
     
 
@@ -131,7 +115,7 @@ public class UsersController {
     @RequestMapping(value="/users/{username}" , method=RequestMethod.DELETE,
 	consumes = {MediaType.APPLICATION_JSON_VALUE},
 	produces = MediaType.APPLICATION_JSON_VALUE)    
-    public User deleteUser(@PathVariable(value="username") String username) {    	
+    public void deleteUser(@PathVariable(value="username") String username) {    	
     	
     	// TODO : return 404 e 400
         User user = new User();
@@ -143,9 +127,7 @@ public class UsersController {
 		} catch (UserNotFoundException e) {
 			
 			logger.error("User not found : " + username + '\n' + e);
-		} 		
-        
-        return user;
+		} 		               
     }
     
     

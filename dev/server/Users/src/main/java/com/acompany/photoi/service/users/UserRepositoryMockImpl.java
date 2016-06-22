@@ -1,14 +1,15 @@
 package com.acompany.photoi.service.users;
 
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class UserRepositoryMockImpl implements UserRepository {
 
 	private Map<String,User> repoMap = new HashMap();
@@ -22,7 +23,7 @@ public class UserRepositoryMockImpl implements UserRepository {
 	@Override
 	public List<User> findAll() {
 
-		return (List<User>) repoMap.values();
+		return new ArrayList<User>(repoMap.values());
 	}
 
 	@Override
