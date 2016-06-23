@@ -88,6 +88,25 @@ public class UsersController {
         return user;
     }
 
+    @RequestMapping(value="/users" , method=RequestMethod.POST,
+	consumes = {MediaType.APPLICATION_JSON_VALUE},
+	produces = MediaType.APPLICATION_JSON_VALUE)    
+    public User createUser(@RequestBody User user) {    	
+    	
+		try {
+			User userFound = userRepo.findByUserName(user.getUsername());
+		} catch (UserNotFoundException e) {
+			
+			// this is a new user then
+			userRepo.save(user);
+			logger.error("User created : " + user.getUsername());
+			
+			return user;				
+		}
+
+		logger.error("Invalid user supplied : " + user.getUsername());					
+		return user;
+    }       
     
     @RequestMapping(value="/users" , method=RequestMethod.PUT,
 	consumes = {MediaType.APPLICATION_JSON_VALUE},
@@ -98,20 +117,15 @@ public class UsersController {
 		try {
 			userFound = userRepo.findByUserName(user.getUsername());
 		} catch (UserNotFoundException e) {
-			
-			// this is a new user then
-			userRepo.save(user);
-			logger.error("User created : " + user.getUsername());
-
+			logger.error("Invalid user supplied : " + user.getUsername());
 		}
 
-		logger.error("User updated : " + user.getUsername());
 		userFound.update(user);
-		userRepo.save(userFound);	        
-    }
-    
+		userRepo.save(userFound);
+		logger.error("User updated : " + user.getUsername());
 
-    
+    }
+        
     @RequestMapping(value="/users/{username}" , method=RequestMethod.DELETE,
 	consumes = {MediaType.APPLICATION_JSON_VALUE},
 	produces = MediaType.APPLICATION_JSON_VALUE)    
@@ -123,10 +137,12 @@ public class UsersController {
 			
 			user = userRepo.findByUserName(username);
 	        userRepo.delete(user);
+			logger.error("User deleted : " + username);
+
 			
 		} catch (UserNotFoundException e) {
 			
-			logger.error("User not found : " + username + '\n' + e);
+			logger.error("Invalid user supplied : " + user.getUsername());
 		} 		               
     }
     

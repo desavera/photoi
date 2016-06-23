@@ -9,6 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -34,10 +35,29 @@ public class PaymentController {
         return entities;
     }
 
-    
-    @RequestMapping(value="/payment/{paymentId}" , method=RequestMethod.GET,
+    @RequestMapping(value="/users" , method=RequestMethod.POST,
 	consumes = {MediaType.APPLICATION_JSON_VALUE},
 	produces = MediaType.APPLICATION_JSON_VALUE)    
+    public PaymentRequest createPaymentRequest(@RequestBody PaymentRequest paymentReq) {    	
+    	
+		try {
+			PaymentRequest paymentRequestFound = paymentRequestRepo.findById(paymentReq.getId());
+		} catch (PaymentRequestNotFoundException e) {
+			
+			// this is a new user then
+			paymentRequestRepo.save(paymentReq);
+			logger.error("PaymentRequest created : " + paymentReq);
+			
+			return paymentReq;				
+		}
+
+		logger.error("Invalid payment request supplied : " + paymentReq);					
+		return paymentReq;
+    }
+    
+    
+    
+    @RequestMapping(value="/users/{paymentId}" , method=RequestMethod.GET)
     public PaymentRequest findPayment(@PathVariable(value="paymentId") Integer paymentId) {    	
     	
         PaymentRequest paymentRequestFound = new PaymentRequest();
@@ -52,29 +72,25 @@ public class PaymentController {
     }
     
     
+
+    
     @RequestMapping(value="/payment" , method=RequestMethod.PUT,
 	consumes = {MediaType.APPLICATION_JSON_VALUE},
 	produces = MediaType.APPLICATION_JSON_VALUE)    
-    public PaymentRequest updatePaymentRequest(@PathVariable(value="PaymentRequest") PaymentRequest paymentRequest) {    	
+    public void updateUser(@RequestBody PaymentRequest paymentReq) {    	
     	
         PaymentRequest paymentRequestFound = new PaymentRequest();
 		try {
-			paymentRequestFound = paymentRequestRepo.findById(paymentRequest.getId());
+			paymentRequestFound = paymentRequestRepo.findById(paymentReq.getId());
 		} catch (PaymentRequestNotFoundException e) {
-			
-			// this is a new PaymentRequest then
-			paymentRequestRepo.save(paymentRequestFound);
-			logger.error("PaymentRequest updated : " + paymentRequestFound);
+			logger.error("Invalid payment request supplied : " + paymentReq.getId());
 		}
 
-		logger.error("PaymentRequest created : " + paymentRequest);
-		paymentRequestFound.update(paymentRequest);
-		paymentRequestRepo.save(paymentRequestFound);	
-        return paymentRequestFound;
+		paymentRequestFound.update(paymentReq);
+		paymentRequestRepo.save(paymentRequestFound);
+		logger.error("PaymentRequest updated : " + paymentRequestFound);
+
     }
-    
-
-
     
     @RequestMapping(value="/payment/{paymentId}" , method=RequestMethod.DELETE,
 	consumes = {MediaType.APPLICATION_JSON_VALUE},
@@ -90,7 +106,7 @@ public class PaymentController {
 			
 		} catch (PaymentRequestNotFoundException e) {
 			
-			logger.error("Payment not found : " + paymentId + '\n' + e);
+			logger.error("Invalid payment supplied : " + paymentId);
 		} 		
         
         return paymentRequestFound;
