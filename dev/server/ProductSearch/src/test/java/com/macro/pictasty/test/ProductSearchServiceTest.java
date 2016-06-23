@@ -24,15 +24,17 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.WebApplicationContext;
 
-
+import com.acompany.photoi.service.productsearch.ProductSearchApplication;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes=ProductSearchServiceTest.class, loader=SpringApplicationContextLoader.class)
+@SpringApplicationConfiguration(classes=ProductSearchApplication.class)
 @WebAppConfiguration
+@EnableAutoConfiguration
+@IntegrationTest
 public class ProductSearchServiceTest {
 
 	
-	final String uri = "http://localhost:8080/psearch";
+	
 	final Logger logger = Logger.getLogger(ProductSearchServiceTest.class);
 
 	@Bean
@@ -45,18 +47,19 @@ public class ProductSearchServiceTest {
 		return factory;
 	}
 
-	RestTemplate template = new TestRestTemplate();
-
-  //  @Autowired
-    //private WebApplicationContext appContext;
-      
-    
+	
+   
 	@Test
-	public void testRequest() throws Exception {
-        String result = template.getForObject(uri, String.class);
+	public void testRequestForFindAll() throws Exception {
+	
+		
+		final String uri = "http://localhost:8080/psearch";
+		RestTemplate rt = new TestRestTemplate();        
+   		
+        String result = rt.getForObject(uri, String.class);
         
         logger.debug(result);
 	}
 	
-    
+  
  }

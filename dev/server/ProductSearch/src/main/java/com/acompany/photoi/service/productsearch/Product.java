@@ -72,7 +72,7 @@ public class Product implements Serializable {
 
 		StringBuffer str = new StringBuffer();
 		str.append("Id : " + id + '\n');
-		str.append("Origin : " + name + '\n');
+		str.append("Name : " + name + '\n');
 
 		return str.toString();
 	}
