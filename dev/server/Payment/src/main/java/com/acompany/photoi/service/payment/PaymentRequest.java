@@ -4,19 +4,6 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.PrePersist;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -37,10 +24,9 @@ public class PaymentRequest implements Serializable {
 
 
 	public PaymentRequest(Integer id, Sender sender, String description, String reference, String date) {
-		super();
 		this.id = id;
 		this.sender = sender;
-		this.description = description;
+		this.description = description.toUpperCase();
 		this.reference = reference;
 		this.date = date;
 	}

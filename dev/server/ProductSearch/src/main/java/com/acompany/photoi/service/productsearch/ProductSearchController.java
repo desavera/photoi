@@ -7,9 +7,6 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,42 +22,12 @@ public class ProductSearchController {
     private ProductRepository productRepo;
     
 	final Logger logger = Logger.getLogger(ProductSearchController.class); 
-
-    
-    @RequestMapping(value="/psearch" , method=RequestMethod.POST,
-		    		consumes = {MediaType.APPLICATION_JSON_VALUE},
-		    		produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Product> findProductsByQueryParam(
-    		final @RequestParam(defaultValue = "0", required = false) int page,
-     	    final @RequestParam(defaultValue = "10", required = false) int pageSize,
-     	    @RequestBody ProductQuery query) {
-    	
-		logger.debug("Quering schedules for : " + '\n' + query);
-
-		Pageable pager = new PageRequest(page, pageSize);
-
-		List<Product> matchList = productRepo.findByQueryParam(query);
-
-		return matchList;
-
-    }    
-
-    @RequestMapping(value="/psearch", method=RequestMethod.PUT)
-    public Product updateProduct(@RequestBody Product product) {    	
-    	Product entity = productRepo.findById(product.getId());
-    	
-    	entity.update(product);
-    		
-    	
-        return entity;
-    }       
-    
     
     @RequestMapping("/psearch")
-    public List<Product> findAllSchedules(
+    public List<Product> findAllProducts(
     		final @RequestParam(defaultValue = "0", required = false) int page,
      	    final @RequestParam(defaultValue = "10", required = false) int pageSize) {
-    	Pageable pager = new PageRequest(page, pageSize);
+
     	List<Product> entities = productRepo.findAll();
         return entities;
     }

@@ -18,6 +18,11 @@ public class Product implements Serializable {
 	private Integer id;
 	private String name;
 
+	public Product(Integer id, String name) {
+		this.id = id;
+		this.name = name;
+	}
+
 	//
 	// Accessors/Mutators
 	//
@@ -25,8 +30,8 @@ public class Product implements Serializable {
 		return id;
 	}
 
-	public void setId(Integer sch_id) {
-		this.id = sch_id;
+	public void setId(Integer id) {
+		this.id = id;
 	}
 
 	public void setName(String name) {

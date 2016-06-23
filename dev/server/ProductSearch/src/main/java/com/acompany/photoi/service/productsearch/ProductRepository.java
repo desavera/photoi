@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ProductRepository  {
-	Product findById(Integer id);
+	
 	List<Product> findAll();		              
-	List<Product> findByQueryParam(ProductQuery query);	
+	
 }

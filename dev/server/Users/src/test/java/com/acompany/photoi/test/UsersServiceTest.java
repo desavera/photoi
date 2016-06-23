@@ -107,7 +107,7 @@ public class UsersServiceTest {
 	}
 	
 	@Test
-	public void testRequestForFindUSer() throws Exception {
+	public void testRequestForFindUser() throws Exception {
 		
 		final String uri = "http://localhost:8080/users/photoiuser";
 		RestTemplate rt = new TestRestTemplate();        

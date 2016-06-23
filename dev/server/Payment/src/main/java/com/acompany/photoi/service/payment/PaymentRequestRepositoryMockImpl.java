@@ -7,12 +7,10 @@ import java.util.Map;
 import java.util.ArrayList;
 import java.util.Comparator;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 
+@Repository
 public class PaymentRequestRepositoryMockImpl implements PaymentRequestRepository {
 
 	private Map<Integer,PaymentRequest> repoMap = new HashMap();
@@ -20,10 +18,9 @@ public class PaymentRequestRepositoryMockImpl implements PaymentRequestRepositor
 	
 	public PaymentRequestRepositoryMockImpl() {
 		
-		repoMap.put(1,new PaymentRequest(1,new Sender("PaymentRequest1","PaymentRequest1@photoi.com"),"purchase item 1","1","01/01/2001"));
+		repoMap.put(1,new PaymentRequest(1,new Sender("photoiuser1","photoiuser1@gmail.com"),"Compra de 1 unidade do produto 1"," ","01/01/2001"));
 	}
-	
-	
+		
 	@Override
 	public List<PaymentRequest> findAll() {
 		return new ArrayList<PaymentRequest>(repoMap.values());
