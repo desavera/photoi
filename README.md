@@ -11,7 +11,7 @@ Projeto inspirado no exercicio proposto para avaliacao tecnica na M4U. O aplicat
 
 o aplicativo , batizado de Photoi , roda em dispositivos moveis Android com as seguintes especificacoes minimas recomendadas :
 
-- Android API 16+ 
+- Android SDK 14 
 
 PARA DESENVOLVIMENTO
 
