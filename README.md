@@ -9,9 +9,9 @@ Projeto inspirado no exercicio proposto para avaliacao tecnica na M4U. O aplicat
 - logout
 - atualizacao e remocao de registro de pagamentos
 
-o aplicativo , batizado de Photoi , roda em dispositivos moveis Android com as seguintes especificacoes minimas recomendadas :
+o aplicativo , batizado de Photoi , foi desenvolvido com Android API 23 SDK e roda em dispositivos moveis Android com as seguintes especificacoes minimas recomendadas :
 
-- Android SDK 14 
+- Android 6 (M) ou mais novo
 
 PARA DESENVOLVIMENTO
 

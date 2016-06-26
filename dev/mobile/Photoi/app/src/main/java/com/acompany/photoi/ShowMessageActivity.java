@@ -14,13 +14,12 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-
-public class DisplayMessageActivity extends AppCompatActivity {
+public class ShowMessageActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_display_message);
+        setContentView(R.layout.activity_show_message);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -36,12 +35,13 @@ public class DisplayMessageActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
+
         String message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
         TextView textView = new TextView(this);
         textView.setTextSize(40);
         textView.setText(message);
 
-        RelativeLayout layout = (RelativeLayout) findViewById(R.id.content);
+        RelativeLayout layout = (RelativeLayout) findViewById(R.id.fragment);
         layout.addView(textView);
 
 
@@ -69,10 +69,9 @@ public class DisplayMessageActivity extends AppCompatActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_display_message,
+            View rootView = inflater.inflate(R.layout.fragment_show_message,
                     container, false);
             return rootView;
         }
     }
-
 }
