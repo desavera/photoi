@@ -75,8 +75,8 @@ public class UsersContentProviderMock extends ContentProvider {
                         String[] selectionArgs, String sortOrder) {
 
 
-        MatrixCursor cursor = new MatrixCursor(new String[] {"username","password"},1);
-        cursor.addRow(new String[] {"photoiuser@gmail.com","photoi123"});
+        MatrixCursor cursor = new MatrixCursor(new String[] {"credential"},1);
+        cursor.addRow(new String[] {"photoiuser@gmail.com:photoi123"});
 
         return cursor;
     }

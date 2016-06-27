@@ -3,39 +3,23 @@ package com.acompany.photoi;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.app.IntentService;
-import android.content.ContentProvider;
-import android.content.ContentProviderClient;
-import android.content.ContentResolver;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.os.RemoteException;
-import android.support.annotation.NonNull;
+import android.content.IntentFilter;
 import android.support.v7.app.AppCompatActivity;
-import android.app.LoaderManager.LoaderCallbacks;
-
-import android.content.CursorLoader;
-import android.content.Loader;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.AsyncTask;
 
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A login screen that offers login via email/password.
@@ -48,16 +32,51 @@ public class LoginActivity extends AppCompatActivity {
     private static final int REQUEST_READ_USERSDB = 0;
 
     // UI references.
-    private AutoCompleteTextView mEmailView;
+    private EditText mEmailView;
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
 
+
+
+    public class PasswordMatchResponseReceiver extends BroadcastReceiver {
+        public static final String ACTION_RESP =
+                "com.acompany.photoi.intent.action.USER_LOGIN_MESSAGE_PROCESSED";
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            Boolean passwordMatch = intent.getBooleanExtra(UserLoginService.PASSWORD_MATCH_PARAM,false);
+
+            if (passwordMatch) {
+
+                System.out.println("MATCH");
+
+            } else {
+
+                mEmailView.clearComposingText();
+                mPasswordView.clearComposingText();
+            }
+
+        }
+    }
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+
+        // Register the password match event callback
+        IntentFilter filter = new IntentFilter(PasswordMatchResponseReceiver.ACTION_RESP);
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
+        PasswordMatchResponseReceiver receiver = new PasswordMatchResponseReceiver();
+        registerReceiver(receiver, filter);
+
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
 
@@ -128,11 +147,10 @@ public class LoginActivity extends AppCompatActivity {
             // form field with an error.
             focusView.requestFocus();
         } else {
+
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
-            //showProgress(true);
-
-            System.out.println("WILL DO IT...");
+            showProgress(true);
 
             UserLoginService.startActionLogin(this,mEmailView.getText().toString(),mPasswordView.getText().toString());
 

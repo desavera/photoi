@@ -6,8 +6,6 @@ import android.content.Intent;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.RemoteException;
-import android.provider.SyncStateContract;
-import android.support.v4.content.LocalBroadcastManager;
 
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
@@ -23,17 +21,14 @@ public class UserLoginService extends IntentService {
     private static final String EMAIL = "com.acompany.photoi.extra.EMAIL";
     private static final String PASSWORD = "com.acompany.photoi.extra.PASSWORD";
 
+    public static final String PASSWORD_MATCH_PARAM = "com.acompany.photoi.extra.PASSWORD_MATCH";
+
+
     public UserLoginService() {
         super("UserLoginService");
     }
 
-    /**
-     * Starts this service to perform action Baz with the given parameters. If
-     * the service is already performing a task this action will be queued.
-     *
-     * @see IntentService
-     */
-    // TODO: Customize helper method
+
     public static void startActionLogin(Context context, String param1, String param2) {
         Intent intent = new Intent(context, UserLoginService.class);
         intent.setAction(ACTION_LOGIN);
@@ -61,11 +56,8 @@ public class UserLoginService extends IntentService {
     private void handleActionLogin(String param1, String param2) {
 
 
-        String email = param1.toUpperCase();
+        String email = param1.toString();
         String password = param2.toString();
-
-
-        System.out.println("DID IT !");
 
         ContentProviderClient cp = getContentResolver().acquireContentProviderClient(UsersContentProviderMock.CONTENT_URI);
         Cursor cursor = null;
@@ -82,7 +74,7 @@ public class UserLoginService extends IntentService {
 
                 String credential = cursor.getString(0);
 
-                        String[] pieces = credential.split(":");
+                String[] pieces = credential.split(":");
                 if (pieces[0].equals(email) && pieces[1].equals(password)) {
 
                     passwordMatch = true;
@@ -106,17 +98,12 @@ public class UserLoginService extends IntentService {
             if (cp != null)
                 cp.release();
 
-/*            if (passwordMatch) {
 
-                Intent localIntent =
-                        new Intent(SyncStateContract.Constants.BROADCAST_ACTION)
-                                // Puts the status into the Intent
-                                .putExtra(SyncStateContract.Constants.EXTENDED_DATA_STATUS, status);
-                // Broadcasts the Intent to receivers in this app.
-                LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
-
-
-            }*/
+            Intent broadcastIntent = new Intent();
+            broadcastIntent.setAction(LoginActivity.PasswordMatchResponseReceiver.ACTION_RESP);
+            broadcastIntent.addCategory(Intent.CATEGORY_DEFAULT);
+            broadcastIntent.putExtra(PASSWORD_MATCH_PARAM, passwordMatch);
+            sendBroadcast(broadcastIntent);
 
         }
     }
