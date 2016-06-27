@@ -59,13 +59,13 @@ public class UserLoginService extends IntentService {
         String email = param1.toString();
         String password = param2.toString();
 
-        ContentProviderClient cp = getContentResolver().acquireContentProviderClient(UsersContentProviderMock.CONTENT_URI);
+        ContentProviderClient cp = getContentResolver().acquireContentProviderClient(UsersContentProvider.CONTENT_URI);
         Cursor cursor = null;
         boolean passwordMatch = false;
 
         try {
 
-            cursor = cp.query(UsersContentProviderMock.CONTENT_URI,null,null,null,null);
+            cursor = cp.query(UsersContentProvider.CONTENT_URI,null,null,null,null);
 
             cursor.moveToFirst();
 

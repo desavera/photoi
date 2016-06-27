@@ -46,16 +46,19 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
 
+            showProgress(false);
+
             Boolean passwordMatch = intent.getBooleanExtra(UserLoginService.PASSWORD_MATCH_PARAM,false);
 
             if (passwordMatch) {
 
                 System.out.println("MATCH");
+                
 
             } else {
 
-                mEmailView.clearComposingText();
-                mPasswordView.clearComposingText();
+                mEmailView.setText("");
+                mPasswordView.setText("");
             }
 
         }
