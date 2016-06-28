@@ -23,7 +23,6 @@ public class UsersService extends IntentService {
 
     public static final String PASSWORD_MATCH_PARAM = "com.acompany.photoi.extra.PASSWORD_MATCH";
 
-
     public UsersService() {
         super("UsersService");
     }
@@ -109,6 +108,7 @@ public class UsersService extends IntentService {
             broadcastIntent.setAction(LoginActivity.PasswordMatchResponseReceiver.ACTION_RESP);
             broadcastIntent.addCategory(Intent.CATEGORY_DEFAULT);
             broadcastIntent.putExtra(PASSWORD_MATCH_PARAM, passwordMatch);
+
             sendBroadcast(broadcastIntent);
 
         }

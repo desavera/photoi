@@ -7,18 +7,41 @@ import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.util.Log;
 
+import com.acompany.photoi.model.User;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
-import io.swagger.client.ApiException;
-import io.swagger.client.api.UserApi;
-import io.swagger.client.model.User;
+
 
 public class UsersContentProvider extends ContentProvider {
 
+
+    private static final String TAG = "UsersContentProvider";
+
     public static final String PROVIDER_NAME = "com.acompany.photoi.userscontentprovider";
     public static final Uri CONTENT_URI = Uri.parse("content://" + PROVIDER_NAME);
+
+    public static final String SERVER_URL = "http://192.168.1.105:8080";
+
 
 
     private PhotoiSQLiteManager dbManager;
@@ -94,28 +117,16 @@ public class UsersContentProvider extends ContentProvider {
         } else {
 
             // fetches remote service
-            UserApi api = new UserApi();
-            try {
-                User user = api.getUserByName(username);
-                MatrixCursor remoteResult = new MatrixCursor(new String[]{"userdata"});
+            User user = fetchUser(username);
+
+            MatrixCursor remoteResult = new MatrixCursor(new String[]{"userdata"});
+            if (user != null) {
+
                 remoteResult.addRow(new String[]{user.getUsername() + ':' + user.getPassword()});
-
-                return remoteResult;
-
-            } catch (TimeoutException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ApiException e) {
-                e.printStackTrace();
             }
 
+            return remoteResult;
         }
-
-        return null;
-
 
     }
 
@@ -124,5 +135,44 @@ public class UsersContentProvider extends ContentProvider {
                       String[] selectionArgs) {
         // TODO: Implement this to handle requests to update one or more rows.
         throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    protected User fetchUser(String username) {
+
+        try {
+            //Create an HTTP client
+            HttpClient client = new DefaultHttpClient();
+            HttpGet get = new HttpGet(SERVER_URL + "/users/" + username);
+
+            //Perform the request and check the status code
+            HttpResponse response = client.execute(get);
+            StatusLine statusLine = response.getStatusLine();
+            if(statusLine.getStatusCode() == 200) {
+                HttpEntity entity = response.getEntity();
+                InputStream content = entity.getContent();
+
+                try {
+                    //Read the server response and attempt to parse it as JSON
+                    Reader reader = new InputStreamReader(content);
+
+                    GsonBuilder gsonBuilder = new GsonBuilder();
+                    gsonBuilder.setDateFormat("M/d/yy hh:mm a");
+                    Gson gson = gsonBuilder.create();
+                    User user = gson.fromJson(reader, User.class);
+                    content.close();
+
+                    return user;
+
+                } catch (Exception ex) {
+                    Log.e(TAG, "Failed to parse JSON due to: " + ex);
+
+                }
+            } else {
+                Log.e(TAG, "Server responded with status code: " + statusLine.getStatusCode());
+            }
+        } catch(Exception ex) {
+            Log.e(TAG, "Failed to send HTTP POST request due to: " + ex);
+        }
+        return null;
     }
 }
