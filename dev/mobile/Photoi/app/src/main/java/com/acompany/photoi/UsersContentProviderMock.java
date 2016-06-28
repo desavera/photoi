@@ -19,7 +19,7 @@ public class UsersContentProviderMock extends ContentProvider {
 
 
     public static String[] DUMMY_CREDENTIALS = new String[]{
-            "photoiuser:photoi123"
+            "photoi:photoi"
     };
 
 

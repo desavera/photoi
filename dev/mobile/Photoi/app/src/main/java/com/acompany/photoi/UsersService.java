@@ -68,7 +68,7 @@ public class UsersService extends IntentService {
 
             // we first check locally for a match
 
-            cursor = cp.query(UsersContentProvider.CONTENT_URI,null,null,null,null);
+            cursor = cp.query(UsersContentProvider.CONTENT_URI,new String[]{PhotoiSQLiteManager.USER_DATA_COLUMN},null,new String[]{username},null);
 
             cursor.moveToFirst();
 
@@ -88,10 +88,6 @@ public class UsersService extends IntentService {
                 cursor.moveToNext();
 
             }
-
-            // and then remotely
-
-            cursor = cp.query(UsersContentProvider.CONTENT_URI,null,null,null,null);
 
             cursor.moveToFirst();
 

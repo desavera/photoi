@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
+
     compileSdkVersion 23
     buildToolsVersion "23.0.3"
 
@@ -19,9 +20,16 @@ android {
     }
 }
 
+
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.4.0'
     compile 'com.android.support:design:23.4.0'
+    compile "io.swagger:swagger-annotations:1.5.0"
+    compile "com.google.code.gson:gson:2.3.1"
+    compile "com.mcxiaoke.volley:library:1.0.19@aar"
+    testCompile "org.robolectric:robolectric:3.0"
+    testCompile "net.jodah:concurrentunit:0.4.2"
 }
