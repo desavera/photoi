@@ -38,7 +38,7 @@
             android:exported="true" />
 
         <service
-            android:name=".UserLoginService"
+            android:name=".UsersService"
             android:exported="false" />
 
         <provider

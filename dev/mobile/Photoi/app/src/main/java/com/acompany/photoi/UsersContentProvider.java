@@ -4,8 +4,16 @@ import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
+
+import io.swagger.client.ApiException;
+import io.swagger.client.api.UserApi;
+import io.swagger.client.model.User;
 
 public class UsersContentProvider extends ContentProvider {
 
@@ -16,9 +24,6 @@ public class UsersContentProvider extends ContentProvider {
     private PhotoiSQLiteManager dbManager;
     private SQLiteDatabase database;
 
-
-    public UsersContentProvider() {
-    }
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
@@ -66,8 +71,50 @@ public class UsersContentProvider extends ContentProvider {
     public Cursor query(Uri uri, String[] projection, String selection,
                         String[] selectionArgs, String sortOrder) {
 
+        if ((selectionArgs.length == 0) || (projection[0].compareTo(PhotoiSQLiteManager.USER_DATA_COLUMN) != 0)) {
+
+            // full userdata fetch from local database
+            database = dbManager.getReadableDatabase();
+            return database.rawQuery("SELECT USERDATA FROM USER",null);
+
+            //TODO: add /users for remote full fetch
+
+        }
+
+        String username = selectionArgs[0];
+        // userdata fetch from local database
         database = dbManager.getReadableDatabase();
-        return database.rawQuery("SELECT USERDATA FROM USER",null);
+        Cursor localResult = database.rawQuery("SELECT USERDATA FROM USER WHERE USERDATA LIKE " + "\'" + username + ':' + "%'",null);
+
+
+        if (localResult.getCount() != 0) {
+
+            return localResult;
+
+        } else {
+
+            // fetches remote service
+            UserApi api = new UserApi();
+            try {
+                User user = api.getUserByName(username);
+                MatrixCursor remoteResult = new MatrixCursor(new String[]{"userdata"});
+                remoteResult.addRow(new String[]{user.getUsername() + ':' + user.getPassword()});
+
+                return remoteResult;
+
+            } catch (TimeoutException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ApiException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        return null;
 
 
     }

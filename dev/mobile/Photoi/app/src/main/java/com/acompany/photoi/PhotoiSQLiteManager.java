@@ -10,7 +10,7 @@ import android.util.Log;
  */
 public class PhotoiSQLiteManager extends SQLiteOpenHelper {
 
-    private static final String DATABASE_NAME = "photodev.db";
+    private static final String DATABASE_NAME = "photoidev.db";
     private static final int DATABASE_VERSION = 1;
 
     public static final String USER_DATA_COLUMN = "userdata";

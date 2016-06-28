@@ -24,7 +24,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 public class UserApi {
-  String basePath = "http://recruitment.m4u.com.br/v1";
+  //String basePath = "http://recruitment.m4u.com.br/v1";
+  String basePath = "http://localhost:8080";
   ApiInvoker apiInvoker = ApiInvoker.getInstance();
 
   public void addHeader(String key, String value) {

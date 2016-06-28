@@ -19,13 +19,9 @@ public class UsersContentProviderMock extends ContentProvider {
 
 
     public static String[] DUMMY_CREDENTIALS = new String[]{
-            "photoiuser@gmail.com:photoi123"
+            "photoiuser:photoi123"
     };
 
-
-
-    public UsersContentProviderMock() {
-    }
 
     // delete first
     @Override

@@ -14,25 +14,25 @@ import android.os.RemoteException;
  * TODO: Customize class - update intent actions, extra parameters and static
  * helper methods.
  */
-public class UserLoginService extends IntentService {
+public class UsersService extends IntentService {
 
     private static final String ACTION_LOGIN = "com.acompany.photoi.extra.LOGIN";
 
-    private static final String EMAIL = "com.acompany.photoi.extra.EMAIL";
+    private static final String USERNAME = "com.acompany.photoi.extra.USERNAME";
     private static final String PASSWORD = "com.acompany.photoi.extra.PASSWORD";
 
     public static final String PASSWORD_MATCH_PARAM = "com.acompany.photoi.extra.PASSWORD_MATCH";
 
 
-    public UserLoginService() {
-        super("UserLoginService");
+    public UsersService() {
+        super("UsersService");
     }
 
 
     public static void startActionLogin(Context context, String param1, String param2) {
-        Intent intent = new Intent(context, UserLoginService.class);
+        Intent intent = new Intent(context, UsersService.class);
         intent.setAction(ACTION_LOGIN);
-        intent.putExtra(EMAIL, param1);
+        intent.putExtra(USERNAME, param1);
         intent.putExtra(PASSWORD, param2);
         context.startService(intent);
     }
@@ -42,7 +42,7 @@ public class UserLoginService extends IntentService {
         if (intent != null) {
             final String action = intent.getAction();
             if (ACTION_LOGIN.equals(action)) {
-                final String param1 = intent.getStringExtra(EMAIL);
+                final String param1 = intent.getStringExtra(USERNAME);
                 final String param2 = intent.getStringExtra(PASSWORD);
                 handleActionLogin(param1, param2);
             }
@@ -56,7 +56,7 @@ public class UserLoginService extends IntentService {
     private void handleActionLogin(String param1, String param2) {
 
 
-        String email = param1.toString();
+        String username = param1.toString();
         String password = param2.toString();
 
         ContentProviderClient cp = getContentResolver().acquireContentProviderClient(UsersContentProvider.CONTENT_URI);
@@ -64,6 +64,9 @@ public class UserLoginService extends IntentService {
         boolean passwordMatch = false;
 
         try {
+
+
+            // we first check locally for a match
 
             cursor = cp.query(UsersContentProvider.CONTENT_URI,null,null,null,null);
 
@@ -75,7 +78,7 @@ public class UserLoginService extends IntentService {
                 String credential = cursor.getString(0);
 
                 String[] pieces = credential.split(":");
-                if (pieces[0].equals(email) && pieces[1].equals(password)) {
+                if (pieces[0].equals(username) && pieces[1].equals(password)) {
 
                     passwordMatch = true;
                     break;
@@ -85,6 +88,13 @@ public class UserLoginService extends IntentService {
                 cursor.moveToNext();
 
             }
+
+            // and then remotely
+
+            cursor = cp.query(UsersContentProvider.CONTENT_URI,null,null,null,null);
+
+            cursor.moveToFirst();
+
 
         } catch (RemoteException e) {
 
