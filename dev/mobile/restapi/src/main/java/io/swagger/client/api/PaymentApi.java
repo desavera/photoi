@@ -25,7 +25,7 @@ import java.util.concurrent.TimeoutException;
 
 public class PaymentApi {
   //String basePath = "http://recruitment.m4u.com.br/v1";
-  String basePath = "http://localhost:8080";
+  String basePath = "http://192.168.1.105:8080";
   ApiInvoker apiInvoker = ApiInvoker.getInstance();
 
   public void addHeader(String key, String value) {
