@@ -60,8 +60,7 @@ public class ProductSearchActivity extends AppCompatActivity implements ProductS
 
             case R.id.action_logout:
 
-
-
+                UsersService.startActionLogout(this,username);
                 return true;
 
 

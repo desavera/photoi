@@ -8,6 +8,8 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.RemoteException;
 
+import com.acompany.photoi.model.User;
+
 import java.util.Date;
 
 /**
@@ -28,6 +30,9 @@ public class UsersService extends IntentService {
     public static final String PASSWORD_MATCH_PARAM = "com.acompany.photoi.extra.PASSWORD_MATCH";
 
     public static final String LOGIN_TIME = "com.acompany.photoi.extra.LOGIN_TIME";
+
+    private PhotoiUserSessionManager sessionManager;
+
 
     public UsersService() {
         super("UsersService");
@@ -54,6 +59,9 @@ public class UsersService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         if (intent != null) {
+
+            sessionManager = new PhotoiUserSessionManager(this);
+
             final String action = intent.getAction();
             if (ACTION_LOGIN.equals(action)) {
                 final String param1 = intent.getStringExtra(USERNAME);
@@ -102,6 +110,8 @@ public class UsersService extends IntentService {
                 if (pieces[0].equals(username) && pieces[1].equals(password)) {
 
                     passwordMatch = true;
+                    sessionManager.init(username);
+                    RestAPIFetcher.getInstance().userLogin(new User(username));
                     break;
 
                 }
@@ -137,25 +147,15 @@ public class UsersService extends IntentService {
         }
     }
 
-    private void handleActionLogout(String param) {
+    private void handleActionLogout(String username) {
 
 
-        String username = param.toString();
+        sessionManager.finish(username);
 
-        SharedPreferences settings = getSharedPreferences(LoginActivity.PREFS_NAME, 0);
-        SharedPreferences.Editor editor = settings.edit();
-
-        editor.putString(UsersService.USERNAME,"");
-        editor.putLong(UsersService.LOGIN_TIME,new Date().getTime());
-
-        // Commit the edits!
-        editor.commit();
-
-        // TODO : do the remote call for logout
-
+        RestAPIFetcher.getInstance().userLogout(new User(username));
 
         Intent broadcastIntent = new Intent();
-        broadcastIntent.setAction(LoginActivity.PasswordMatchResponseReceiver.ACTION_RESP);
+        broadcastIntent.setAction(LoginActivity.SessionFinishedResponseReceiver.ACTION_RESP);
         broadcastIntent.addCategory(Intent.CATEGORY_DEFAULT);
         broadcastIntent.putExtra(USERNAME, username);
 

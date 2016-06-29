@@ -3,17 +3,15 @@ Desafio M4U
 
 Projeto inspirado no exercicio proposto para avaliacao tecnica na M4U. O aplicativo simula um portal de vendas de fotos tematicas onde o usuario realiza :
 
-- buscas por tema
-- cadastro de suas fotos
 - login 
 - logout
-- atualizacao e remocao de registro de pagamentos
+- buscas por produtos
 
 o aplicativo , batizado de Photoi , foi desenvolvido com Android API 23 SDK e roda em dispositivos moveis Android com as seguintes especificacoes minimas recomendadas :
 
 - Android 6 (M) ou mais novo
 
-PARA DESENVOLVIMENTO
+AMBIENTE DE DESENVOLVIMENTO
 
 para instalacao do ambiente de desenvolvimento, a recomendacao minima de infraestrutura eh :
 
@@ -35,17 +33,18 @@ para execucao da ultima versao em desenvolvimento :
 
 # docker run --publish=8080 -i -t --name photoi-service-apigateway desavera/photoi-service-container:latest /photoi/run.sh
 
-agora verifique a instalacao do sistema completa e teste abrindo , a partir de um browser compativel , o linke http://localhost:8080/photoi.html
-
 para o build dos servicos em sua propria estacao de trabalho deve-se ter instalado :
 
 - Maven
-- SQLite
 - JDK 1.8
 
-para rodar o servico [service name] :
+para rodar o servico APIGateway :
 
-# cd dev/[service name]/
-# mvn install tomcat7:run
+# cd dev/server/APIGateway
+# mvn -Dmaven.test.skip=true install spring-boot:run
+
+AMBIENTE DE TESTES
+
+
 
 para maiores detalhes sobre a implementacao : desavera@gmail.com

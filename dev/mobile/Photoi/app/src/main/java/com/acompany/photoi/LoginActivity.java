@@ -34,7 +34,6 @@ public class LoginActivity extends AppCompatActivity {
      */
     private static final int REQUEST_READ_USERSDB = 0;
 
-    public static final String PREFS_NAME = "photoi-prefs";
 
     // UI references.
     private EditText mUsernameView;
@@ -59,16 +58,6 @@ public class LoginActivity extends AppCompatActivity {
 
             if (passwordMatch) {
 
-                // stores the token
-                SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-                SharedPreferences.Editor editor = settings.edit();
-
-                editor.putString(UsersService.USERNAME,username);
-                editor.putLong(UsersService.LOGIN_TIME,new Date().getTime());
-
-                // Commit the edits!
-                editor.commit();
-
                 // starts the product search activity
                 Intent productSearchIntent = new Intent(context, ProductSearchActivity.class);
                 productSearchIntent.putExtra(UsersService.USERNAME,username);
@@ -86,26 +75,51 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    public class SessionFinishedResponseReceiver extends BroadcastReceiver {
+        public static final String ACTION_RESP =
+                "com.acompany.photoi.intent.action.USER_LOGOUT_PROCESSED";
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            // starts the product search activity
+            Intent loginIntent = new Intent(context, LoginActivity.class);
+            startActivity(loginIntent);
+        }
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
 
-        // Restore preferences
-        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-        String username = settings.getString(UsersService.USERNAME,"NULL");
-        long loginTime = settings.getLong(UsersService.LOGIN_TIME,0);
+        PhotoiUserSessionManager session = new PhotoiUserSessionManager(this);
 
-        if (username.compareTo("NULL") == 0) {
+        String username = session.getValidSessionUsername();
+
+        if (username.compareTo(PhotoiUserSessionManager.NOT_VALID_TOKEN) == 0) {
 
             setContentView(R.layout.activity_login);
 
 
+            /*
+            LISTENERS REGISTRATION
+             */
             // Register the password match event callback
-            IntentFilter filter = new IntentFilter(PasswordMatchResponseReceiver.ACTION_RESP);
-            filter.addCategory(Intent.CATEGORY_DEFAULT);
-            PasswordMatchResponseReceiver receiver = new PasswordMatchResponseReceiver();
-            registerReceiver(receiver, filter);
+            IntentFilter filter1 = new IntentFilter(PasswordMatchResponseReceiver.ACTION_RESP);
+            filter1.addCategory(Intent.CATEGORY_DEFAULT);
+            PasswordMatchResponseReceiver receiver1 = new PasswordMatchResponseReceiver();
+            registerReceiver(receiver1, filter1);
+
+
+            // Register the user logout event callback
+            IntentFilter filter2 = new IntentFilter(SessionFinishedResponseReceiver.ACTION_RESP);
+            filter2.addCategory(Intent.CATEGORY_DEFAULT);
+            SessionFinishedResponseReceiver receiver2 = new SessionFinishedResponseReceiver();
+            registerReceiver(receiver2, filter2);
+
+
 
             // Set up the login form.
             mUsernameView = (EditText) findViewById(R.id.username);

@@ -16,7 +16,8 @@ public class UserRepositoryMockImpl implements UserRepository {
 	
 	public UserRepositoryMockImpl() {
 		
-		repoMap.put("photoiuser",new User(1,"photoiuser","user","one","one@photoi.com" ,"photoi123","12345",User.NOTLOGGED));	
+		repoMap.put("photoi",new User(1,"photoi","admin","user","admin@photoi.com" ,"photoi","12345",User.NOTLOGGED));	
+		repoMap.put("photoiuser",new User(2,"photoiuser","photoi","user","photoiuser@photoi.com" ,"photoi123","12345",User.NOTLOGGED));	
 	}
 	
 

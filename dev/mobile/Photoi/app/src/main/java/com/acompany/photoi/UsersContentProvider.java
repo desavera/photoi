@@ -35,12 +35,10 @@ import java.util.concurrent.TimeoutException;
 public class UsersContentProvider extends ContentProvider {
 
 
-    private static final String TAG = "UsersContentProvider";
-
     public static final String PROVIDER_NAME = "com.acompany.photoi.userscontentprovider";
     public static final Uri CONTENT_URI = Uri.parse("content://" + PROVIDER_NAME);
 
-    public static final String SERVER_URL = "http://192.168.1.105:8080";
+
 
 
 
@@ -117,7 +115,7 @@ public class UsersContentProvider extends ContentProvider {
         } else {
 
             // fetches remote service
-            User user = fetchUser(username);
+            User user = RestAPIFetcher.getInstance().fetchUser(username);
 
             MatrixCursor remoteResult = new MatrixCursor(new String[]{"userdata"});
             if (user != null) {
@@ -137,42 +135,4 @@ public class UsersContentProvider extends ContentProvider {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
-    protected User fetchUser(String username) {
-
-        try {
-            //Create an HTTP client
-            HttpClient client = new DefaultHttpClient();
-            HttpGet get = new HttpGet(SERVER_URL + "/users/" + username);
-
-            //Perform the request and check the status code
-            HttpResponse response = client.execute(get);
-            StatusLine statusLine = response.getStatusLine();
-            if(statusLine.getStatusCode() == 200) {
-                HttpEntity entity = response.getEntity();
-                InputStream content = entity.getContent();
-
-                try {
-                    //Read the server response and attempt to parse it as JSON
-                    Reader reader = new InputStreamReader(content);
-
-                    GsonBuilder gsonBuilder = new GsonBuilder();
-                    gsonBuilder.setDateFormat("M/d/yy hh:mm a");
-                    Gson gson = gsonBuilder.create();
-                    User user = gson.fromJson(reader, User.class);
-                    content.close();
-
-                    return user;
-
-                } catch (Exception ex) {
-                    Log.e(TAG, "Failed to parse JSON due to: " + ex);
-
-                }
-            } else {
-                Log.e(TAG, "Server responded with status code: " + statusLine.getStatusCode());
-            }
-        } catch(Exception ex) {
-            Log.e(TAG, "Failed to send HTTP POST request due to: " + ex);
-        }
-        return null;
-    }
 }

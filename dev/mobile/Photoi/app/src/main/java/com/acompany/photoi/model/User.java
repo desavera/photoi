@@ -40,6 +40,12 @@ public class User implements Serializable {
 		this(-1,"Error...","Error...","Error...","Error...","Error...","Error...",-1);
 	}
 
+	// for login/logout porpouses
+	public User(String username) {
+		this();
+		setUsername(username);
+	}
+
 	//
 	// Accessors/Mutators
 	//
