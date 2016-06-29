@@ -1,7 +1,7 @@
 # photoi
 Desafio M4U
 
-Projeto inspirado no exercicio proposto para avaliacao tecnica na M4U. O aplicativo simula um portal de vendas de fotos tematicas onde o usuario realiza :
+Projeto inspirado no exercicio proposto para avaliacao tecnica na M4U. O aplicativo simula um portal de vendas de produtos diversos onde o usuario realiza :
 
 - login 
 - logout
