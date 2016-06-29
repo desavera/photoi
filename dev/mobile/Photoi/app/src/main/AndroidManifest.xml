@@ -45,7 +45,21 @@
             android:authorities="com.acompany.photoi.userscontentprovider"
             android:enabled="true"
             android:exported="true" />
+        <provider
+            android:name=".ProductSearchContentProviderMock"
+            android:authorities="com.acompany.photoi.productsearchcontentprovider"
+            android:enabled="true"
+            android:exported="true" />
 
+        <activity
+            android:name=".ProductSearchActivity"
+            android:label="@string/title_activity_product_search"
+            android:parentActivityName=".LoginActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.acompany.photoi.LoginActivity" />
+        </activity>
     </application>
 
 </manifest>

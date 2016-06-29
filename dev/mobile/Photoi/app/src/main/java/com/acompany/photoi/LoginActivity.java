@@ -7,7 +7,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
+
 
 import android.os.Build;
 import android.os.Bundle;
@@ -20,6 +22,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.util.Date;
+
 /**
  * A login screen that offers login via username/password.
  */
@@ -29,6 +33,8 @@ public class LoginActivity extends AppCompatActivity {
      * Id to identity READ_CONTACTS permission request.
      */
     private static final int REQUEST_READ_USERSDB = 0;
+
+    public static final String PREFS_NAME = "photoi-prefs";
 
     // UI references.
     private EditText mUsernameView;
@@ -48,16 +54,33 @@ public class LoginActivity extends AppCompatActivity {
             showProgress(false);
 
             Boolean passwordMatch = intent.getBooleanExtra(UsersService.PASSWORD_MATCH_PARAM,false);
+            String username = intent.getStringExtra(UsersService.USERNAME);
+
 
             if (passwordMatch) {
 
-                System.out.println("MATCH");
+                // stores the token
+                SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+                SharedPreferences.Editor editor = settings.edit();
 
+                editor.putString(UsersService.USERNAME,username);
+                editor.putLong(UsersService.LOGIN_TIME,new Date().getTime());
+
+                // Commit the edits!
+                editor.commit();
+
+                // starts the product search activity
+                Intent productSearchIntent = new Intent(context, ProductSearchActivity.class);
+                productSearchIntent.putExtra(UsersService.USERNAME,username);
+                startActivity(productSearchIntent);
 
             } else {
 
                 mUsernameView.setText("");
                 mPasswordView.setText("");
+
+                mUsernameView.setError("Credentials mismatch...");
+
             }
 
         }
@@ -67,42 +90,62 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
 
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        // Restore preferences
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+        String username = settings.getString(UsersService.USERNAME,"NULL");
+        long loginTime = settings.getLong(UsersService.LOGIN_TIME,0);
+
+        if (username.compareTo("NULL") == 0) {
+
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.activity_login);
 
 
-        // Register the password match event callback
-        IntentFilter filter = new IntentFilter(PasswordMatchResponseReceiver.ACTION_RESP);
-        filter.addCategory(Intent.CATEGORY_DEFAULT);
-        PasswordMatchResponseReceiver receiver = new PasswordMatchResponseReceiver();
-        registerReceiver(receiver, filter);
+            // Register the password match event callback
+            IntentFilter filter = new IntentFilter(PasswordMatchResponseReceiver.ACTION_RESP);
+            filter.addCategory(Intent.CATEGORY_DEFAULT);
+            PasswordMatchResponseReceiver receiver = new PasswordMatchResponseReceiver();
+            registerReceiver(receiver, filter);
 
-        // Set up the login form.
-        mUsernameView = (EditText) findViewById(R.id.username);
+            // Set up the login form.
+            mUsernameView = (EditText) findViewById(R.id.username);
 
 
-        mPasswordView = (EditText) findViewById(R.id.password);
-        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == R.id.login || id == EditorInfo.IME_NULL) {
-                    attemptLogin();
-                    return true;
+            mPasswordView = (EditText) findViewById(R.id.password);
+            mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                @Override
+                public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
+                    if (id == R.id.login || id == EditorInfo.IME_NULL) {
+                        attemptLogin();
+                        return true;
+                    }
+                    return false;
                 }
-                return false;
-            }
-        });
+            });
 
-        Button mUsernameSignInButton = (Button) findViewById(R.id.username_sign_in_button);
-        mUsernameSignInButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                attemptLogin();
-            }
-        });
+            Button mUsernameSignInButton = (Button) findViewById(R.id.username_sign_in_button);
+            mUsernameSignInButton.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    attemptLogin();
+                }
+            });
 
-        mLoginFormView = findViewById(R.id.login_form);
-        mProgressView = findViewById(R.id.login_progress);
+            mLoginFormView = findViewById(R.id.login_form);
+            mProgressView = findViewById(R.id.login_progress);
+
+        } else {
+
+
+            // starts the product search activity
+            Intent productSearchIntent = new Intent(this, ProductSearchActivity.class);
+            productSearchIntent.putExtra(UsersService.USERNAME,username);
+            startActivity(productSearchIntent);
+
+
+        }
+
+
     }
 
 

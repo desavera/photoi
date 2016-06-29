@@ -15,12 +15,15 @@ public class PhotoiSQLiteManager extends SQLiteOpenHelper {
 
     public static final String USER_DATA_COLUMN = "userdata";
     public static final String USER_TABLE = "user";
+
+    public static final String PRODUCT_DATA_COLUMN = "productdata";
     public static final String PRODUCT_TABLE = "product";
+
     public static final String PAYMENT_REQUEST_TABLE = "payment_request";
 
     // Database creation sql statement
     private static final String USER_CREATE = "create table " + USER_TABLE + " (_id integer primary key autoincrement, userdata text not null);";
-    private static final String PRODUCT_CREATE = "create table " + PRODUCT_TABLE + " (_id integer primary key autoincrement, name text not null);";
+    private static final String PRODUCT_CREATE = "create table " + PRODUCT_TABLE + " (_id integer primary key autoincrement, productdata text not null);";
     private static final String PAYMENT_REQUEST_CREATE = "create table " + PAYMENT_REQUEST_TABLE + "  (_id integer primary key autoincrement, user_id integer,product_id integer,foreign key(user_id) references users(_id),foreign key(product_id) references product(_id));";
 
 

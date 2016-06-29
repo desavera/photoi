@@ -18,10 +18,12 @@ public class UsersService extends IntentService {
 
     private static final String ACTION_LOGIN = "com.acompany.photoi.extra.LOGIN";
 
-    private static final String USERNAME = "com.acompany.photoi.extra.USERNAME";
-    private static final String PASSWORD = "com.acompany.photoi.extra.PASSWORD";
+    public static final String USERNAME = "com.acompany.photoi.extra.USERNAME";
+    public static final String PASSWORD = "com.acompany.photoi.extra.PASSWORD";
 
     public static final String PASSWORD_MATCH_PARAM = "com.acompany.photoi.extra.PASSWORD_MATCH";
+
+    public static final String LOGIN_TIME = "com.acompany.photoi.extra.LOGIN_TIME";
 
     public UsersService() {
         super("UsersService");
@@ -29,6 +31,7 @@ public class UsersService extends IntentService {
 
 
     public static void startActionLogin(Context context, String param1, String param2) {
+
         Intent intent = new Intent(context, UsersService.class);
         intent.setAction(ACTION_LOGIN);
         intent.putExtra(USERNAME, param1);
@@ -108,6 +111,7 @@ public class UsersService extends IntentService {
             broadcastIntent.setAction(LoginActivity.PasswordMatchResponseReceiver.ACTION_RESP);
             broadcastIntent.addCategory(Intent.CATEGORY_DEFAULT);
             broadcastIntent.putExtra(PASSWORD_MATCH_PARAM, passwordMatch);
+            broadcastIntent.putExtra(USERNAME, username);
 
             sendBroadcast(broadcastIntent);
 

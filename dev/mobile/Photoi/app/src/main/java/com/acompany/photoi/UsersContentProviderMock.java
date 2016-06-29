@@ -58,7 +58,8 @@ public class UsersContentProviderMock extends ContentProvider {
 
         this.DUMMY_CREDENTIALS[length] = new String (username + ':' + password);
 
-        return null;
+        // returns the new dummy size
+        return Uri.withAppendedPath(CONTENT_URI,new Integer(length).toString());
     }
 
     @Override
@@ -72,7 +73,7 @@ public class UsersContentProviderMock extends ContentProvider {
 
 
         MatrixCursor cursor = new MatrixCursor(new String[] {"credential"},1);
-        cursor.addRow(new String[] {"photoiuser@gmail.com:photoi123"});
+        cursor.addRow(new String[] {DUMMY_CREDENTIALS[0]});
 
         return cursor;
     }
@@ -87,6 +88,7 @@ public class UsersContentProviderMock extends ContentProvider {
 
         this.DUMMY_CREDENTIALS[0] = new String(username + ':' + password);
 
+        // returns number of updated rows
         return 1;
     }
 }
