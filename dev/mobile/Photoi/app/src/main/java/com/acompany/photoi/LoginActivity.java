@@ -89,6 +89,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+        super.onCreate(savedInstanceState);
 
         // Restore preferences
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
@@ -97,7 +98,6 @@ public class LoginActivity extends AppCompatActivity {
 
         if (username.compareTo("NULL") == 0) {
 
-            super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_login);
 
 

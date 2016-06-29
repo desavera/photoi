@@ -53,7 +53,7 @@ public class ProductSearchRecyclerViewAdapter extends RecyclerView.Adapter<Produ
                 }
             }
         });*/
-        holder.mButtonView.setOnClickListener(new View.OnClickListener() {
+        holder.mBuyButtonView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (null != mListener) {
@@ -63,6 +63,18 @@ public class ProductSearchRecyclerViewAdapter extends RecyclerView.Adapter<Produ
                 }
             }
         });
+
+        holder.mCancelButtonView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (null != mListener) {
+                    // Notify the active callbacks interface (the activity, if the
+                    // fragment is attached to one) that an item has been selected.
+                    mListener.onListFragmentInteraction(holder.mItem);
+                }
+            }
+        });
+
     }
 
     @Override
@@ -74,7 +86,9 @@ public class ProductSearchRecyclerViewAdapter extends RecyclerView.Adapter<Produ
         public final View mView;
         public final TextView mIdView;
         public final TextView mContentView;
-        public final Button mButtonView;
+        public final Button mBuyButtonView;
+        public final Button mCancelButtonView;
+
         public Product mItem;
 
         public ViewHolder(View view) {
@@ -82,7 +96,8 @@ public class ProductSearchRecyclerViewAdapter extends RecyclerView.Adapter<Produ
             mView = view;
             mIdView = (TextView) view.findViewById(R.id.id);
             mContentView = (TextView) view.findViewById(R.id.content);
-            mButtonView = (Button) view.findViewById(R.id.buy);
+            mBuyButtonView = (Button) view.findViewById(R.id.buy);
+            mCancelButtonView = (Button) view.findViewById(R.id.cancel);
         }
 
         @Override

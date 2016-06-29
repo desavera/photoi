@@ -4,8 +4,11 @@ import android.app.IntentService;
 import android.content.ContentProviderClient;
 import android.content.Intent;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.RemoteException;
+
+import java.util.Date;
 
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
@@ -17,6 +20,7 @@ import android.os.RemoteException;
 public class UsersService extends IntentService {
 
     private static final String ACTION_LOGIN = "com.acompany.photoi.extra.LOGIN";
+    private static final String ACTION_LOGOUT = "com.acompany.photoi.extra.LOGOUT";
 
     public static final String USERNAME = "com.acompany.photoi.extra.USERNAME";
     public static final String PASSWORD = "com.acompany.photoi.extra.PASSWORD";
@@ -39,6 +43,14 @@ public class UsersService extends IntentService {
         context.startService(intent);
     }
 
+    public static void startActionLogout(Context context, String param) {
+
+        Intent intent = new Intent(context, UsersService.class);
+        intent.setAction(ACTION_LOGOUT);
+        intent.putExtra(USERNAME, param);
+        context.startService(intent);
+    }
+
     @Override
     protected void onHandleIntent(Intent intent) {
         if (intent != null) {
@@ -47,7 +59,14 @@ public class UsersService extends IntentService {
                 final String param1 = intent.getStringExtra(USERNAME);
                 final String param2 = intent.getStringExtra(PASSWORD);
                 handleActionLogin(param1, param2);
+            } else
+
+            if (ACTION_LOGOUT.equals(action)) {
+                final String param = intent.getStringExtra(USERNAME);
+                handleActionLogout(param);
             }
+
+
         }
     }
 
@@ -117,4 +136,32 @@ public class UsersService extends IntentService {
 
         }
     }
+
+    private void handleActionLogout(String param) {
+
+
+        String username = param.toString();
+
+        SharedPreferences settings = getSharedPreferences(LoginActivity.PREFS_NAME, 0);
+        SharedPreferences.Editor editor = settings.edit();
+
+        editor.putString(UsersService.USERNAME,"");
+        editor.putLong(UsersService.LOGIN_TIME,new Date().getTime());
+
+        // Commit the edits!
+        editor.commit();
+
+        // TODO : do the remote call for logout
+
+
+        Intent broadcastIntent = new Intent();
+        broadcastIntent.setAction(LoginActivity.PasswordMatchResponseReceiver.ACTION_RESP);
+        broadcastIntent.addCategory(Intent.CATEGORY_DEFAULT);
+        broadcastIntent.putExtra(USERNAME, username);
+
+        sendBroadcast(broadcastIntent);
+
+
+    }
+
 }

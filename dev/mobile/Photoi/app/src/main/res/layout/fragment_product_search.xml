@@ -28,9 +28,21 @@
     <Button
         android:id="@+id/buy"
         android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
+        android:layout_width="0dip"
+        android:layout_weight="15"
         android:text="@string/buy"
         android:background="@color/buyBlue"
+        android:textSize="@dimen/text_size"
         android:onClick="paymentRequestAction" />
+
+    <Button
+        android:id="@+id/cancel"
+        android:layout_height="wrap_content"
+        android:layout_width="0dip"
+        android:layout_weight="15"
+        android:text="@string/cancel"
+        android:background="@color/cancelRed"
+        android:textSize="@dimen/text_size"
+        android:onClick="paymentCancelAction" />
 
 </LinearLayout>
