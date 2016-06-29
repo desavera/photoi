@@ -22,17 +22,6 @@ para instalacao do ambiente de desenvolvimento, a recomendacao minima de infraes
 - internet access with Download Speed around 2Mbps / 512kbps
 - Docker.io installed
 
-de uma conta com permissao de administrador (sudo group) :
-
-# apt-get install docker
-# docker run --publish=8080 -i -t --name photoi-service-apigateway desavera/photoi-service-container:latest /bin/bash
-
-o projeto estah em /photoi e o devop deve abrir os projetos em dev/server com o Eclipse e os projetos em dev/mobile com o Android Studio ambos jah instalados no container.
-
-para execucao da ultima versao em desenvolvimento :
-
-# docker run --publish=8080 -i -t --name photoi-service-apigateway desavera/photoi-service-container:latest /photoi/run.sh
-
 para o build dos servicos em sua propria estacao de trabalho deve-se ter instalado :
 
 - Maven
@@ -41,9 +30,22 @@ para o build dos servicos em sua propria estacao de trabalho deve-se ter instala
 para rodar o servico APIGateway :
 
 # cd dev/server/APIGateway
-# mvn -Dmaven.test.skip=true install spring-boot:run
+# mvn install spring-boot:run
+
+para rodar o servico Users :
+
+# cd dev/server/Users
+# mvn install tomcat7:run
+
+uma vez rodando os dois servicos basta abrir o Android Studio e carregar o projeto em dev/mobile/Photoi e executar no dispositivo de sua preferencia.
+
 
 AMBIENTE DE TESTES
+
+foram criados dois modulos de testes somente para os servicos :
+
+- APIGateway : testamos o bootup to servico a partir de um hit local que deve abrir a tela de admin login
+- Users : testamos todas as chamadas da API REST
 
 
 

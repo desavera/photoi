@@ -36,7 +36,7 @@ public class APIGatewayServiceTest {
 
 
 	@Test
-	public void testRequest() throws Exception {
+	public void testAdminLogin() throws Exception {
         String result = template.getForObject(uri, String.class);
         
         logger.debug(result);

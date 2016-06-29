@@ -61,7 +61,7 @@ public class UsersServiceTest {
 	public void testRequestForFindAllUsers() throws Exception {
 	
 		
-		final String uri = "http://localhost:8080/users";
+		final String uri = "http://localhost:8083/users";
 		RestTemplate template = new TestRestTemplate();
         String result = template.getForObject(uri, String.class);
         
@@ -71,7 +71,7 @@ public class UsersServiceTest {
 	@Test
 	public void testRequestForLogin() throws Exception {
 		
-		final String uri = "http://localhost:8080/users/login";
+		final String uri = "http://localhost:8083/users/login";
 		RestTemplate rt = new TestRestTemplate();        
         
         rt.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
@@ -90,7 +90,7 @@ public class UsersServiceTest {
 	@Test
 	public void testRequestForLogout() throws Exception {
 		
-		final String uri = "http://localhost:8080/users/logout";
+		final String uri = "http://localhost:8083/users/logout";
 		RestTemplate rt = new TestRestTemplate();        
         
         rt.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
@@ -109,7 +109,7 @@ public class UsersServiceTest {
 	@Test
 	public void testRequestForFindUser() throws Exception {
 		
-		final String uri = "http://localhost:8080/users/photoiuser";
+		final String uri = "http://localhost:8083/users/photoiuser";
 		RestTemplate rt = new TestRestTemplate();        
         
         rt.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
@@ -124,7 +124,7 @@ public class UsersServiceTest {
 	@Test
 	public void testRequestForUpdate() throws Exception {
 		
-		final String uri = "http://localhost:8080/users";
+		final String uri = "http://localhost:8083/users";
 		RestTemplate rt = new TestRestTemplate();        
         
         rt.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
@@ -142,7 +142,7 @@ public class UsersServiceTest {
 	@Test
 	public void testRequestForDelete() throws Exception {
 		
-		final String uri = "http://localhost:8080/users/photoiuser";
+		final String uri = "http://localhost:8083/users/photoiuser";
 		RestTemplate rt = new TestRestTemplate();        
         
         rt.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
